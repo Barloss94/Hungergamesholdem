@@ -19,14 +19,172 @@
     .summary{margin-top:10px;padding:11px;border-radius:10px;background:#242018;color:#f5d98d}.error{color:#ff8e8e;margin-top:8px}
     .table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:650px}th,td{text-align:left;padding:10px;border-bottom:1px solid var(--line)}th{color:var(--muted);font-size:13px}td.num,th.num{text-align:right}.rank{font-weight:900;color:var(--accent)}
     .history-item{display:grid;grid-template-columns:1fr auto;gap:10px;padding:11px 0;border-bottom:1px solid var(--line)}.history-item:last-child{border:0}.history-item button{padding:7px 9px}
-    .rules{display:flex;gap:14px;flex-wrap:wrap}.rule{background:var(--panel2);padding:8px 11px;border-radius:9px}.footer-actions{display:flex;gap:8px;justify-content:flex-end}
-    @media(max-width:760px){.grid{grid-template-columns:1fr}.victims{grid-template-columns:1fr}.type-buttons{grid-template-columns:1fr}.row.mobile-stack{flex-direction:column;align-items:stretch}}
+    .rules{display:flex;gap:14px;flex-wrap:wrap}.rule{background:var(--panel2);padding:8px 11px;border-radius:9px}.money-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.money-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}.money-box{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px}.money-box b{display:block;font-size:20px;margin-top:3px}.prize-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.prize-list{margin:0;padding-left:22px}.footer-actions{display:flex;gap:8px;justify-content:flex-end}
+    @media(max-width:760px){.grid{grid-template-columns:1fr}.victims{grid-template-columns:1fr}.type-buttons{grid-template-columns:1fr}.row.mobile-stack{flex-direction:column;align-items:stretch}.money-grid,.money-summary,.prize-grid{grid-template-columns:1fr 1fr}}
   </style>
+
+<style id="hunger-games-theme-v2">
+:root{
+  --bg:#070806;--panel:#10110e;--panel2:#171710;--line:#5c4724;
+  --text:#eee8da;--muted:#aaa28f;--gold:#d8ad57;--gold2:#8c682e;
+  --danger:#9b2d1f;--fire:#c75b22;--green:#66764c;
+}
+html{background:#050604}
+body{
+  color:var(--text);
+  background:
+    radial-gradient(circle at 50% -10%,rgba(181,111,31,.20),transparent 34%),
+    radial-gradient(circle at 12% 28%,rgba(116,25,15,.14),transparent 26%),
+    linear-gradient(rgba(5,6,4,.94),rgba(5,6,4,.98)),
+    repeating-linear-gradient(135deg,#0b0c09 0,#0b0c09 3px,#080906 3px,#080906 7px);
+  font-family:Georgia,"Times New Roman",serif;
+  min-height:100vh;
+}
+body:before{
+  content:"";
+  position:fixed;inset:0;pointer-events:none;z-index:-1;
+  background:
+    linear-gradient(90deg,transparent 0 49.8%,rgba(216,173,87,.035) 50%,transparent 50.2%),
+    radial-gradient(ellipse at top,rgba(225,121,27,.10),transparent 45%);
+}
+.container,.wrap,main{max-width:1280px!important}
+h1,h2,h3{
+  font-family:Arial,Helvetica,sans-serif;
+  text-transform:uppercase;letter-spacing:.12em;
+  color:#e7bd68;
+}
+h1{
+  font-size:clamp(34px,6vw,72px)!important;
+  line-height:.95!important;
+  text-align:center;
+  text-shadow:0 2px 0 #4a2c10,0 0 22px rgba(219,143,48,.28);
+  margin-bottom:8px!important;
+}
+header p,.subtitle{text-align:center;letter-spacing:.24em;text-transform:uppercase;color:#c7a866!important}
+.card{
+  position:relative;
+  background:
+    linear-gradient(145deg,rgba(24,24,18,.98),rgba(10,11,8,.98));
+  border:1px solid #72552c!important;
+  border-radius:2px!important;
+  box-shadow:
+    inset 0 0 0 1px rgba(216,173,87,.08),
+    inset 0 0 32px rgba(0,0,0,.72),
+    0 8px 26px rgba(0,0,0,.38)!important;
+}
+.card:before,.card:after{
+  content:"";position:absolute;width:22px;height:22px;pointer-events:none
+}
+.card:before{left:5px;top:5px;border-left:2px solid #9b7539;border-top:2px solid #9b7539}
+.card:after{right:5px;bottom:5px;border-right:2px solid #9b7539;border-bottom:2px solid #9b7539}
+.card h2{
+  border-bottom:1px solid #574522;
+  padding-bottom:10px;
+}
+button{
+  font-family:Arial,Helvetica,sans-serif!important;
+  text-transform:uppercase;letter-spacing:.08em;font-weight:800!important;
+  border-radius:2px!important;
+  color:#f2d38e!important;
+  border:1px solid #9d7435!important;
+  background:
+    linear-gradient(#252319,#0d0e0b)!important;
+  box-shadow:inset 0 0 0 1px rgba(255,217,138,.08),0 3px 8px rgba(0,0,0,.35)!important;
+}
+button:hover{
+  background:linear-gradient(#3b2d18,#15130d)!important;
+  border-color:#d5a94f!important;
+  transform:translateY(-1px);
+}
+button.danger{border-color:#8c3527!important;color:#e5a18f!important}
+input,select,textarea{
+  border-radius:1px!important;
+  background:#090a08!important;
+  color:#eee8da!important;
+  border:1px solid #59482a!important;
+  box-shadow:inset 0 2px 8px rgba(0,0,0,.5);
+}
+input:focus,select:focus,textarea:focus{
+  outline:none!important;border-color:#c89c4c!important;
+  box-shadow:0 0 0 2px rgba(200,156,76,.12)!important;
+}
+table{border-collapse:collapse!important}
+thead th{
+  color:#e4ba66!important;
+  font-family:Arial,Helvetica,sans-serif;
+  text-transform:uppercase;letter-spacing:.08em;
+  background:#12130f!important;
+  border-bottom:1px solid #80602e!important;
+}
+tbody tr{border-bottom:1px solid rgba(137,105,54,.28)!important}
+tbody tr:hover{background:rgba(195,145,58,.055)!important}
+.small{color:#aaa28f!important}
+.summary,.rule,.money-box{
+  background:linear-gradient(145deg,#14150f,#0b0c09)!important;
+  border:1px solid #594625!important;
+  border-radius:2px!important;
+}
+.money-box b{color:#e6bd69}
+.type-buttons label,.victims label{
+  border-color:#594625!important;
+  background:#0d0e0b!important;
+  border-radius:2px!important;
+}
+.type-buttons label:has(input:checked),.victims label:has(input:checked){
+  border-color:#d0a34d!important;
+  background:#231b0f!important;
+}
+.badge,.pill{
+  border-radius:2px!important;
+  background:#231b0f!important;color:#e7bd68!important;border:1px solid #6f542b!important
+}
+hr{border-color:#4d3b20!important}
+a{color:#e0b65e}
+#lastStory{
+  border-left:3px solid #a23b22!important;
+  background:
+    radial-gradient(circle at right,rgba(155,45,31,.12),transparent 35%),
+    linear-gradient(145deg,#16150f,#0b0c09)!important;
+}
+#tournamentReport{
+  line-height:1.65;
+  background:
+    linear-gradient(rgba(15,15,11,.95),rgba(8,9,7,.98)),
+    repeating-linear-gradient(0deg,transparent 0 28px,rgba(216,173,87,.035) 29px)!important;
+}
+.hg-emblem{
+  width:112px;height:112px;margin:4px auto 14px;border:3px solid #c89a45;border-radius:50%;
+  position:relative;box-shadow:0 0 28px rgba(197,91,34,.28),inset 0 0 18px rgba(0,0,0,.8);
+}
+.hg-emblem:before{
+  content:"♜";position:absolute;inset:0;display:grid;place-items:center;
+  color:#ddb45e;font-size:55px;transform:rotate(-12deg)
+}
+.hg-emblem:after{
+  content:"";position:absolute;left:-8px;right:-8px;top:50%;height:2px;background:#b98738;transform:rotate(-28deg)
+}
+.hg-kicker{
+  text-align:center;color:#b7924d;font:700 12px Arial,sans-serif;
+  letter-spacing:.38em;text-transform:uppercase;margin-bottom:22px
+}
+.hg-flame-line{
+  height:2px;max-width:560px;margin:0 auto 28px;
+  background:linear-gradient(90deg,transparent,#7c361e,#e3ae4f,#7c361e,transparent);
+  box-shadow:0 0 14px rgba(210,92,26,.45)
+}
+@media(max-width:760px){
+  .hg-emblem{width:82px;height:82px}.hg-emblem:before{font-size:40px}
+  header p,.subtitle{letter-spacing:.12em}
+}
+</style>
+
 </head>
 <body>
 <div class="wrap">
   <header class="hero">
-    <h1>🔥 The Hunger Games</h1>
+    <div class="hg-emblem" aria-hidden="true"></div>
+<h1>🔥 The Hunger Games</h1>
+<div class="hg-kicker">Poker Edition • Hunt • Survive • Win</div><div class="hg-flame-line"></div>
     <p>NL Hold'em · Bounty Hunter League Tracker</p>
   </header>
 
@@ -35,6 +193,25 @@
       <div><label class="small">Toernooinaam</label><input id="tournamentName" placeholder="The Hunger Games"></div>
       <div><label class="small">Datum</label><input id="tournamentDate" type="date"></div>
     </div>
+    <h3>Financiële instellingen</h3>
+    <div class="money-grid">
+      <div><label class="small">Buy-in per speler</label><input id="buyIn" type="number" min="0" step="0.50"></div>
+      <div><label class="small">Reguliere prijzenpot p.p.</label><input id="regularPart" type="number" min="0" step="0.50"></div>
+      <div><label class="small">Bounty p.p.</label><input id="bountyPart" type="number" min="0" step="0.50"></div>
+      <div><label class="small">Hunger Games p.p.</label><input id="hungerPart" type="number" min="0" step="0.50"></div>
+    </div>
+    <div id="financeError" class="error"></div>
+    <div class="money-summary">
+      <div class="money-box"><span class="small">Totale inleg</span><b id="totalPot">€0,00</b></div>
+      <div class="money-box"><span class="small">Reguliere pot</span><b id="regularPot">€0,00</b></div>
+      <div class="money-box"><span class="small">Bountypot</span><b id="bountyPot">€0,00</b></div>
+      <div class="money-box"><span class="small">Hunger Games-pot</span><b id="hungerPot">€0,00</b></div>
+    </div>
+    <div class="prize-grid" style="margin-top:14px">
+      <div><h3>Reguliere prijzen</h3><div id="regularPrizes" class="small"></div></div>
+      <div><h3>Hunger Games-prijzen</h3><div id="hungerPrizes" class="small"></div></div>
+    </div>
+
     <div class="rules" style="margin-top:12px">
       <div class="rule">KO-punten: <b>1, 2, 3, 4…</b></div>
       <div class="rule">💀💀 Double Kill: <b>+2 LP</b></div>
@@ -75,7 +252,7 @@
         <h2>Live klassement</h2>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>#</th><th>Speler</th><th class="num">KO</th><th class="num">DK</th><th class="num">TK</th><th class="num">KO LP</th><th class="num">Bonus</th><th class="num">Totaal</th></tr></thead>
+            <thead><tr><th>#</th><th>Speler</th><th class="num">KO</th><th class="num">DK</th><th class="num">TK</th><th class="num">KO LP</th><th class="num">Bonus</th><th class="num">Totaal LP</th><th class="num">Bounty €</th><th class="num">HG-prijs €</th></tr></thead>
             <tbody id="standings"></tbody>
           </table>
         </div>
@@ -95,6 +272,26 @@
   </div>
 
   <section class="card">
+    <h2>Uitslag & uitbetalingen delen</h2>
+    <p class="small">Vul de reguliere eindpositie en reguliere prijs per speler in. Bounty's en Hunger Games-prijzen worden automatisch meegenomen.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Speler</th><th class="num">Eindpositie</th><th class="num">Reguliere prijs €</th><th class="num">Bounty €</th><th class="num">HG-prijs €</th><th class="num">Totaal €</th></tr></thead>
+        <tbody id="payoutRows"></tbody>
+      </table>
+    </div>
+    <div id="shareResult" class="summary" style="white-space:pre-wrap;margin-top:14px">Voeg spelers toe om een uitslag te maken.</div>
+    <div class="row mobile-stack" style="margin-top:10px">
+      <button id="makeImage">🖼️ Maak uitslag-afbeelding</button>
+      <button id="copyReport" class="secondary">📝 Kopieer verslag</button>
+      <button id="copyFullSummary" class="secondary">📋 Kopieer volledig overzicht</button>
+    </div>
+    <h3 style="margin-top:18px">Toernooiverslag</h3>
+    <div id="tournamentReport" class="summary" style="white-space:pre-wrap"></div>
+    <canvas id="resultCanvas" style="display:none"></canvas>
+  </section>
+
+  <section class="card">
     <div class="footer-actions">
       <button class="secondary" id="exportBtn">Backup exporteren</button>
       <button class="secondary" id="importBtn">Backup importeren</button>
@@ -109,8 +306,13 @@ const STORAGE_KEY = 'theHungerGamesTracker_v1';
 const emptyState = () => ({
   tournamentName: 'The Hunger Games',
   tournamentDate: new Date().toISOString().slice(0,10),
+  buyIn: 10,
+  regularPart: 6,
+  bountyPart: 2,
+  hungerPart: 2,
   players: [],
-  events: []
+  events: [],
+  regularResults: {}
 });
 let state = load();
 
@@ -120,9 +322,33 @@ function load(){
   try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || emptyState(); }
   catch { return emptyState(); }
 }
+function num(v){ const n=parseFloat(v); return Number.isFinite(n)?n:0; }
+function money(v){ return new Intl.NumberFormat('nl-NL',{style:'currency',currency:'EUR'}).format(num(v)); }
+const PAYOUTS={1:[100],2:[65,35],3:[50,30,20],4:[45,25,18,12],5:[40,23,16,12,9],6:[35,22,16,11,9,7]};
+function regularPaidPlaces(n){
+  if(n<=0) return 0;
+  return Math.max(1,Math.min(6,Math.ceil(n*0.15)));
+}
+function hungerPaidPlaces(n){
+  const r=regularPaidPlaces(n);
+  return r===0?0:Math.max(1,r-1);
+}
+function prizeAmounts(pot,places){
+  if(!places) return [];
+  return PAYOUTS[places].map(p=>pot*p/100);
+}
+function hungerPrizeForRank(rank){
+  const places=hungerPaidPlaces(state.players.length);
+  const arr=prizeAmounts(state.players.length*num(state.hungerPart),places);
+  return arr[rank-1]||0;
+}
 function save(){
   state.tournamentName = $('tournamentName').value.trim() || 'The Hunger Games';
   state.tournamentDate = $('tournamentDate').value;
+  state.buyIn=num($('buyIn').value);
+  state.regularPart=num($('regularPart').value);
+  state.bountyPart=num($('bountyPart').value);
+  state.hungerPart=num($('hungerPart').value);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 }
 function esc(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
@@ -151,6 +377,9 @@ function calculate(){
 function render(){
   $('tournamentName').value = state.tournamentName;
   $('tournamentDate').value = state.tournamentDate;
+  state.buyIn ??= 10; state.regularPart ??= 6; state.bountyPart ??= 2; state.hungerPart ??= 2; state.regularResults ??= {};
+  $('buyIn').value=state.buyIn; $('regularPart').value=state.regularPart; $('bountyPart').value=state.bountyPart; $('hungerPart').value=state.hungerPart;
+  renderFinances();
   const stats = calculate();
 
   $('players').innerHTML = state.players.length ? state.players.map(p =>
@@ -167,7 +396,23 @@ function render(){
   ensureStories();
   renderLatestLobby();
   renderHistory();
+  renderPayoutSection();
+  $('tournamentReport').textContent=buildTournamentReport();
   updatePreview();
+}
+
+function renderFinances(){
+  const n=state.players.length, buy=num(state.buyIn), reg=num(state.regularPart), bou=num(state.bountyPart), hg=num(state.hungerPart);
+  const parts=reg+bou+hg;
+  $('financeError').textContent = Math.abs(parts-buy)>0.001 ? `Let op: onderdelen zijn samen ${money(parts)}, maar de buy-in is ${money(buy)}.` : '';
+  $('totalPot').textContent=money(n*buy);
+  $('regularPot').textContent=money(n*reg);
+  $('bountyPot').textContent=money(n*bou);
+  $('hungerPot').textContent=money(n*hg);
+  const rp=regularPaidPlaces(n), hp=hungerPaidPlaces(n);
+  const regular=prizeAmounts(n*reg,rp), hunger=prizeAmounts(n*hg,hp);
+  $('regularPrizes').innerHTML = rp ? `<b>${rp} betaald</b><ol class="prize-list">${regular.map((x,i)=>`<li>${money(x)} <span class="small">(${PAYOUTS[rp][i]}%)</span></li>`).join('')}</ol>` : 'Voeg spelers toe.';
+  $('hungerPrizes').innerHTML = hp ? `<b>${hp} betaald</b><ol class="prize-list">${hunger.map((x,i)=>`<li>${money(x)} <span class="small">(${PAYOUTS[hp][i]}%)</span></li>`).join('')}</ol>` : 'Voeg spelers toe.';
 }
 
 function renderVictims(){
@@ -209,7 +454,8 @@ function renderStandings(stats){
     <td class="rank">${i+1}</td><td>${esc(s.name)} ${s.busted?'<span class="small">(OUT)</span>':''}</td>
     <td class="num">${s.kos}</td><td class="num">${s.double}</td><td class="num">${s.triple}</td>
     <td class="num">${s.koLP}</td><td class="num">${s.bonus}</td><td class="num"><b>${s.total}</b></td>
-  </tr>`).join('') : '<tr><td colspan="8" class="small">Nog geen spelers.</td></tr>';
+    <td class="num">${money(s.kos * num(state.bountyPart))}</td><td class="num">${money(hungerPrizeForRank(i+1))}</td>
+  </tr>`).join('') : '<tr><td colspan="10" class="small">Nog geen spelers.</td></tr>';
 }
 
 function eventBreakdownAt(index){
@@ -301,6 +547,172 @@ function renderLatestLobby(){
   $('copyLatest').disabled=false;
 }
 
+function hgRanking(){
+  const stats=calculate();
+  return Object.values(stats).sort((a,b)=>b.total-a.total || b.kos-a.kos || b.double-a.double || b.triple-a.triple || a.name.localeCompare(b.name,'nl'));
+}
+function payoutData(){
+  const stats=calculate(), hg=hgRanking();
+  const hgRank={}; hg.forEach((x,i)=>hgRank[x.id]=i+1);
+  return state.players.map(p=>{
+    const r=state.regularResults[p.id]||{};
+    const bounty=(stats[p.id]?.kos||0)*num(state.bountyPart);
+    const hgPrize=hungerPrizeForRank(hgRank[p.id]||999);
+    const regular=num(r.prize);
+    return {id:p.id,name:p.name,position:parseInt(r.position)||0,regular,bounty,hgPrize,total:regular+bounty+hgPrize,lp:stats[p.id]?.total||0,kos:stats[p.id]?.kos||0};
+  });
+}
+function setResult(id,field,value){
+  state.regularResults ??= {};
+  state.regularResults[id] ??= {};
+  state.regularResults[id][field]=value;
+  save(); renderPayoutSection();
+}
+window.setResult=setResult;
+function renderPayoutSection(){
+  const data=payoutData();
+  $('payoutRows').innerHTML=data.length?data.map(x=>`<tr>
+    <td>${esc(x.name)}</td>
+    <td class="num"><input style="width:85px;text-align:right" type="number" min="1" step="1" value="${state.regularResults[x.id]?.position||''}" onchange="setResult('${x.id}','position',this.value)"></td>
+    <td class="num"><input style="width:105px;text-align:right" type="number" min="0" step="0.50" value="${state.regularResults[x.id]?.prize||''}" onchange="setResult('${x.id}','prize',this.value)"></td>
+    <td class="num">${money(x.bounty)}</td><td class="num">${money(x.hgPrize)}</td><td class="num"><b>${money(x.total)}</b></td>
+  </tr>`).join(''):'<tr><td colspan="6" class="small">Nog geen spelers.</td></tr>';
+  $('shareResult').textContent=data.length?buildFullSummary():'Voeg spelers toe om een uitslag te maken.';
+}
+function sortedFinal(){
+  return payoutData().sort((a,b)=>{
+    if(a.position&&b.position)return a.position-b.position;
+    if(a.position)return -1;if(b.position)return 1;
+    return b.total-a.total;
+  });
+}
+function buildResultsText(){
+  const d=sortedFinal().filter(x=>x.position);
+  let out=`🏆 THE HUNGER GAMES – UITSLAG\n`;
+  if(state.tournamentDate) out+=`${state.tournamentDate}\n`;
+  out+='\n';
+  if(!d.length) return out+'Nog geen reguliere eindposities ingevuld.';
+  d.forEach(x=>out+=`${x.position}. ${x.name}${x.regular>0?` – ${money(x.regular)}`:''}\n`);
+  return out.trim();
+}
+function buildPayoutText(){
+  const d=payoutData().filter(x=>x.total>0).sort((a,b)=>b.total-a.total);
+  let out=`💶 THE HUNGER GAMES – UITBETALINGEN\n\n`;
+  d.forEach(x=>{
+    out+=`${x.name}: ${money(x.total)}\n`;
+    const parts=[];
+    if(x.regular)parts.push(`regulier ${money(x.regular)}`);
+    if(x.bounty)parts.push(`bounty ${money(x.bounty)}`);
+    if(x.hgPrize)parts.push(`Hunger Games ${money(x.hgPrize)}`);
+    if(parts.length)out+=`↳ ${parts.join(' + ')}\n`;
+  });
+  out+=`\nTotaal uit te betalen: ${money(d.reduce((a,x)=>a+x.total,0))}`;
+  return out.trim();
+}
+function buildFullSummary(){
+  const hg=hgRanking(), hp=hungerPaidPlaces(state.players.length);
+  let out=`🔥 THE HUNGER GAMES – EINDOVERZICHT\n`;
+  if(state.tournamentName)out+=`${state.tournamentName}\n`;
+  if(state.tournamentDate)out+=`${state.tournamentDate}\n`;
+  out+=`\n🏆 REGULIERE UITSLAG\n`;
+  const finals=sortedFinal().filter(x=>x.position);
+  if(finals.length) finals.forEach(x=>out+=`${x.position}. ${x.name}${x.regular?` – ${money(x.regular)}`:''}\n`);
+  else out+='Nog niet ingevuld\n';
+  out+=`\n🔥 HUNGER GAMES-KLASSEMENT\n`;
+  hg.forEach((x,i)=>{
+    const prize=i<hp?hungerPrizeForRank(i+1):0;
+    out+=`${i+1}. ${x.name} – ${x.total} LP | ${x.kos} KO${x.kos===1?'':'’s'}${prize?` | ${money(prize)}`:''}\n`;
+  });
+  out+=`\n💶 UITBETALINGEN\n`;
+  const paid=payoutData().filter(x=>x.total>0).sort((a,b)=>b.total-a.total);
+  paid.forEach(x=>out+=`${x.name}: ${money(x.total)}\n`);
+  out+=`\nTotaal: ${money(paid.reduce((a,x)=>a+x.total,0))}`;
+  return out.trim();
+}
+
+function tournamentTotals(){
+  const stats=calculate(), arr=Object.values(stats);
+  return {
+    kos:arr.reduce((a,x)=>a+x.kos,0),
+    doubles:arr.reduce((a,x)=>a+x.double,0),
+    triples:arr.reduce((a,x)=>a+x.triple,0)
+  };
+}
+function buildTournamentReport(){
+  if(!state.players.length)return 'Voeg spelers toe om na afloop automatisch een toernooiverslag te maken.';
+  const final=sortedFinal().filter(x=>x.position);
+  const regularWinner=final.find(x=>x.position===1) || final[0];
+  const hg=hgRanking(), hgWinner=hg[0];
+  const totals=tournamentTotals();
+  const paid=payoutData().filter(x=>x.total>0);
+  const topPaid=[...paid].sort((a,b)=>b.total-a.total)[0];
+  const mostKos=[...hg].sort((a,b)=>b.kos-a.kos||b.total-a.total)[0];
+  const intros=[
+    'De arena is gesloten. Na een avond vol confrontaties, bounty’s en eliminaties is de strijd beslist.',
+    'De laatste kaarten zijn gedeeld en de arena kan dicht. The Hunger Games heeft zijn winnaars opgeleverd.',
+    'Na een avond waarin niemand veilig was, zijn de laatste chips verdeeld en is de balans opgemaakt.'
+  ];
+  const seed=(state.tournamentDate||'').split('').reduce((a,c)=>a+c.charCodeAt(0),state.players.length);
+  let out=`🔥 THE HUNGER GAMES – EINDVERSLAG\n\n${intros[seed%intros.length]}\n\n`;
+  if(regularWinner)out+=`🏆 ${regularWinner.name} eindigde als reguliere winnaar van het toernooi`;
+  if(regularWinner?.regular)out+=` en pakte ${money(regularWinner.regular)} uit de reguliere prijzenpot`;
+  if(regularWinner)out+='.\n\n';
+  if(hgWinner)out+=`🔥 In de Hunger Games-ranglijst was ${hgWinner.name} de sterkste met ${hgWinner.total} LP uit ${hgWinner.kos} KO${hgWinner.kos===1?'':'’s'}.`;
+  if(hgWinner && hungerPrizeForRank(1))out+=` Dat leverde ${money(hungerPrizeForRank(1))} uit de Hunger Games-pot op.`;
+  out+='\n\n';
+  if(totals.doubles||totals.triples){
+    const feats=[];
+    if(totals.doubles)feats.push(`${totals.doubles} Double Kill${totals.doubles===1?'':'s'}`);
+    if(totals.triples)feats.push(`${totals.triples} Triple Kill${totals.triples===1?'':'s'}`);
+    out+=`💀 De arena kende in totaal ${totals.kos} eliminaties, met ${feats.join(' en ')} als speciale kills.\n\n`;
+  } else {
+    out+=`💀 In totaal werden ${totals.kos} spelers uit de arena gestuurd. Geen enkele speler wist een Double of Triple Kill te maken.\n\n`;
+  }
+  if(mostKos && mostKos.kos)out+=`🎯 De meeste eliminaties kwamen op naam van ${mostKos.name}: ${mostKos.kos} KO${mostKos.kos===1?'':'’s'}.\n`;
+  if(topPaid)out+=`💶 De hoogste totale uitbetaling ging naar ${topPaid.name}: ${money(topPaid.total)}.\n`;
+  out+=`\nIn totaal werd ${money(paid.reduce((a,x)=>a+x.total,0))} uitgekeerd aan reguliere prijzen, bounty’s en Hunger Games-prijzen.\n\nMay the odds be ever in your favor.`;
+  return out;
+}
+function wrapCanvasText(ctx,text,x,y,maxWidth,lineHeight){
+  const words=text.split(/\s+/); let line='', lines=[];
+  words.forEach(w=>{const t=line?line+' '+w:w;if(ctx.measureText(t).width>maxWidth&&line){lines.push(line);line=w}else line=t});
+  if(line)lines.push(line);
+  lines.forEach(l=>{ctx.fillText(l,x,y);y+=lineHeight});
+  return y;
+}
+function makeResultsImage(){
+  const data=payoutData(), hg=hgRanking(), final=sortedFinal().filter(x=>x.position);
+  if(!data.length){alert('Voeg eerst spelers toe.');return;}
+  const width=1080, pad=70, rowH=54;
+  const finalRows=Math.max(1,final.length), hgRows=Math.max(1,hg.length), payRows=Math.max(1,data.filter(x=>x.total>0).length);
+  const height=430+(finalRows+hgRows+payRows)*rowH+180;
+  const c=$('resultCanvas'),ctx=c.getContext('2d');c.width=width;c.height=height;
+  const bg=ctx.createLinearGradient(0,0,0,height);bg.addColorStop(0,'#111315');bg.addColorStop(1,'#050607');ctx.fillStyle=bg;ctx.fillRect(0,0,width,height);
+  ctx.strokeStyle='#b58b39';ctx.lineWidth=4;ctx.strokeRect(28,28,width-56,height-56);
+  ctx.textAlign='center';ctx.fillStyle='#f1c75b';ctx.font='bold 54px Arial';ctx.fillText('THE HUNGER GAMES',width/2,105);
+  ctx.fillStyle='#e8e8e8';ctx.font='24px Arial';ctx.fillText(`${state.tournamentName||'The Hunger Games'}${state.tournamentDate?' • '+state.tournamentDate:''}`,width/2,148);
+  let y=220;ctx.textAlign='left';
+  function head(t){ctx.fillStyle='#f1c75b';ctx.font='bold 30px Arial';ctx.fillText(t,pad,y);y+=46;}
+  function row(left,right){ctx.fillStyle='#eee';ctx.font='24px Arial';ctx.fillText(left,pad,y);ctx.textAlign='right';ctx.fillText(right,width-pad,y);ctx.textAlign='left';y+=rowH;}
+  head('🏆 REGULIERE UITSLAG');
+  if(final.length)final.forEach(x=>row(`${x.position}. ${x.name}`,x.regular?money(x.regular):''));
+  else row('Nog niet ingevuld','');
+  y+=18;head('🔥 HUNGER GAMES');
+  hg.forEach((x,i)=>row(`${i+1}. ${x.name} — ${x.total} LP • ${x.kos} KO${x.kos===1?'':'’s'}`,i<hungerPaidPlaces(state.players.length)?money(hungerPrizeForRank(i+1)):''));
+  y+=18;head('💶 TOTALE UITBETALINGEN');
+  const paid=data.filter(x=>x.total>0).sort((a,b)=>b.total-a.total);
+  if(paid.length)paid.forEach(x=>row(x.name,money(x.total))); else row('Nog geen uitbetalingen','');
+  y+=20;ctx.strokeStyle='#444';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(pad,y);ctx.lineTo(width-pad,y);ctx.stroke();y+=45;
+  const totals=tournamentTotals();ctx.fillStyle='#c9c9c9';ctx.font='22px Arial';ctx.textAlign='center';
+  ctx.fillText(`${totals.kos} eliminaties • ${totals.doubles} Double Kill${totals.doubles===1?'':'s'} • ${totals.triples} Triple Kill${totals.triples===1?'':'s'}`,width/2,y);
+  y+=46;ctx.fillStyle='#f1c75b';ctx.font='italic 22px Arial';ctx.fillText('May the odds be ever in your favor.',width/2,y);
+  c.toBlob(blob=>{
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+    a.download=`the-hunger-games-${state.tournamentDate||'uitslag'}.png`;
+    document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  },'image/png');
+}
+
 function renderHistory(){
   if(!state.events.length){ $('history').innerHTML='<div class="small">Nog geen eliminaties geregistreerd.</div>'; return; }
   $('history').innerHTML = state.events.map((e,i)=>{
@@ -321,6 +733,7 @@ $('playerName').addEventListener('keydown',e=>{if(e.key==='Enter')$('addPlayer')
 $('killer').addEventListener('change',()=>{renderVictims();updatePreview();});
 document.querySelectorAll('input[name="killType"]').forEach(x=>x.addEventListener('change',updatePreview));
 $('tournamentName').addEventListener('change',save); $('tournamentDate').addEventListener('change',save);
+['buyIn','regularPart','bountyPart','hungerPart'].forEach(id=>$((id)).addEventListener('input',()=>{save();renderFinances();renderStandings(calculate());}));
 
 $('registerKill').onclick=()=>{
   const type=selectedType(), victimIds=selectedVictims(), killerId=$('killer').value;
@@ -346,6 +759,10 @@ window.removePlayer=id=>{
   if(state.events.some(e=>e.killerId===id||e.victimIds.includes(id))) return alert('Deze speler komt al voor in de historie. Maak die registraties eerst ongedaan.');
   if(confirm('Speler verwijderen?')){state.players=state.players.filter(p=>p.id!==id);save();render();}
 };
+
+$('makeImage').onclick=makeResultsImage;
+$('copyReport').onclick=function(){copyText(buildTournamentReport(),this);};
+$('copyFullSummary').onclick=function(){copyText(buildFullSummary(),this);};
 
 $('resetBtn').onclick=()=>{
   if(confirm('Weet je zeker dat je het volledige toernooi wilt wissen?')){
