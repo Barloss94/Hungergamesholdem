@@ -207,6 +207,7 @@ a{color:#e0b65e}
       <div class="money-box"><span class="small">Bountypot</span><b id="bountyPot">€0,00</b></div>
       <div class="money-box"><span class="small">Hunger Games-pot</span><b id="hungerPot">€0,00</b></div>
     </div>
+    <div id="hostFeeSummary" class="summary" style="margin-top:12px"></div>
     <div class="prize-grid" style="margin-top:14px">
       <div><h3>Reguliere prijzen</h3><div id="regularPrizes" class="small"></div></div>
       <div><h3>Hunger Games-prijzen</h3><div id="hungerPrizes" class="small"></div></div>
@@ -337,9 +338,26 @@ function prizeAmounts(pot,places){
   if(!places) return [];
   return PAYOUTS[places].map(p=>pot*p/100);
 }
+function hostFee(n){
+  if(n<=0) return 0;
+  if(n<=9) return 5;
+  if(n<=18) return 6;
+  if(n<=36) return 8;
+  if(n<=90) return 15;
+  return 15;
+}
+function hostFeeHalf(n){ return hostFee(n)/2; }
+function netRegularPot(){
+  const n=state.players.length;
+  return Math.max(0,n*num(state.regularPart)-hostFeeHalf(n));
+}
+function netHungerPot(){
+  const n=state.players.length;
+  return Math.max(0,n*num(state.hungerPart)-hostFeeHalf(n));
+}
 function hungerPrizeForRank(rank){
   const places=hungerPaidPlaces(state.players.length);
-  const arr=prizeAmounts(state.players.length*num(state.hungerPart),places);
+  const arr=prizeAmounts(netHungerPot(),places);
   return arr[rank-1]||0;
 }
 function save(){
@@ -404,13 +422,30 @@ function render(){
 function renderFinances(){
   const n=state.players.length, buy=num(state.buyIn), reg=num(state.regularPart), bou=num(state.bountyPart), hg=num(state.hungerPart);
   const parts=reg+bou+hg;
-  $('financeError').textContent = Math.abs(parts-buy)>0.001 ? `Let op: onderdelen zijn samen ${money(parts)}, maar de buy-in is ${money(buy)}.` : '';
+  const fee=hostFee(n), half=hostFeeHalf(n);
+  const grossRegular=n*reg, grossHunger=n*hg;
+  const netRegular=Math.max(0,grossRegular-half);
+  const netHunger=Math.max(0,grossHunger-half);
+
+  const errors=[];
+  if(Math.abs(parts-buy)>0.001) errors.push(`Onderdelen zijn samen ${money(parts)}, maar de buy-in is ${money(buy)}.`);
+  if(n>0 && (grossRegular<half || grossHunger<half)){
+    errors.push(`De hostvergoeding van ${money(fee)} kan niet 50/50 uit de reguliere en Hunger Games-pot worden ingehouden.`);
+  }
+  if(n>90) errors.push('De hostvergoedingstabel is vastgesteld tot maximaal 90 spelers.');
+  $('financeError').textContent = errors.length ? `Let op: ${errors.join(' ')}` : '';
+
   $('totalPot').textContent=money(n*buy);
-  $('regularPot').textContent=money(n*reg);
+  $('regularPot').textContent=money(grossRegular);
   $('bountyPot').textContent=money(n*bou);
-  $('hungerPot').textContent=money(n*hg);
+  $('hungerPot').textContent=money(grossHunger);
+
+  $('hostFeeSummary').innerHTML = n
+    ? `Hostvergoeding: <b>${money(fee)}</b> · 50/50 inhouding: <b>${money(half)}</b> uit de reguliere prijzenpot en <b>${money(half)}</b> uit de Hunger Games-pot.<br>Netto prijzenpotten: regulier <b>${money(netRegular)}</b> · Hunger Games <b>${money(netHunger)}</b>.`
+    : 'Voeg spelers toe om de hostvergoeding automatisch te bepalen.';
+
   const rp=regularPaidPlaces(n), hp=hungerPaidPlaces(n);
-  const regular=prizeAmounts(n*reg,rp), hunger=prizeAmounts(n*hg,hp);
+  const regular=prizeAmounts(netRegular,rp), hunger=prizeAmounts(netHunger,hp);
   $('regularPrizes').innerHTML = rp ? `<b>${rp} betaald</b><ol class="prize-list">${regular.map((x,i)=>`<li>${money(x)} <span class="small">(${PAYOUTS[rp][i]}%)</span></li>`).join('')}</ol>` : 'Voeg spelers toe.';
   $('hungerPrizes').innerHTML = hp ? `<b>${hp} betaald</b><ol class="prize-list">${hunger.map((x,i)=>`<li>${money(x)} <span class="small">(${PAYOUTS[hp][i]}%)</span></li>`).join('')}</ol>` : 'Voeg spelers toe.';
 }
@@ -733,7 +768,13 @@ $('playerName').addEventListener('keydown',e=>{if(e.key==='Enter')$('addPlayer')
 $('killer').addEventListener('change',()=>{renderVictims();updatePreview();});
 document.querySelectorAll('input[name="killType"]').forEach(x=>x.addEventListener('change',updatePreview));
 $('tournamentName').addEventListener('change',save); $('tournamentDate').addEventListener('change',save);
-['buyIn','regularPart','bountyPart','hungerPart'].forEach(id=>$((id)).addEventListener('input',()=>{save();renderFinances();renderStandings(calculate());}));
+['buyIn','regularPart','bountyPart','hungerPart'].forEach(id=>$((id)).addEventListener('input',()=>{
+  save();
+  renderFinances();
+  renderStandings(calculate());
+  renderPayoutSection();
+  $('tournamentReport').textContent=buildTournamentReport();
+}));
 
 $('registerKill').onclick=()=>{
   const type=selectedType(), victimIds=selectedVictims(), killerId=$('killer').value;
