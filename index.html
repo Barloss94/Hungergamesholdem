@@ -591,10 +591,13 @@ function payoutData(){
   const hgRank={}; hg.forEach((x,i)=>hgRank[x.id]=i+1);
   return state.players.map(p=>{
     const r=state.regularResults[p.id]||{};
-    const bounty=(stats[p.id]?.kos||0)*num(state.bountyPart);
+    const position=parseInt(r.position)||0;
+    // Iedere KO levert een bounty op. De reguliere toernooiwinnaar
+    // overleeft als laatste en ontvangt daarom ook zijn/haar eigen bounty.
+    const bounty=((stats[p.id]?.kos||0) + (position===1 ? 1 : 0))*num(state.bountyPart);
     const hgPrize=hungerPrizeForRank(hgRank[p.id]||999);
     const regular=num(r.prize);
-    return {id:p.id,name:p.name,position:parseInt(r.position)||0,regular,bounty,hgPrize,total:regular+bounty+hgPrize,lp:stats[p.id]?.total||0,kos:stats[p.id]?.kos||0};
+    return {id:p.id,name:p.name,position,regular,bounty,hgPrize,total:regular+bounty+hgPrize,lp:stats[p.id]?.total||0,kos:stats[p.id]?.kos||0};
   });
 }
 function setResult(id,field,value){
