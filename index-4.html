@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>The Hunger Games - Poker Tracker</title>
+  <style>
+    :root{--bg:#0d0f12;--panel:#171a1f;--panel2:#20242b;--text:#f4f5f7;--muted:#aeb4bf;--line:#303640;--accent:#f0b429;--danger:#e45858;--ok:#52b788}
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+    .wrap{max-width:1100px;margin:auto;padding:18px}.hero{padding:22px 0 10px}.hero h1{margin:0;font-size:clamp(28px,5vw,46px);letter-spacing:.02em}.hero p{margin:6px 0;color:var(--muted)}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:16px}
+    h2{margin:0 0 12px;font-size:20px} h3{margin:14px 0 8px;font-size:16px}
+    input,select,button{font:inherit} input,select{width:100%;padding:11px 12px;border-radius:10px;border:1px solid var(--line);background:var(--panel2);color:var(--text)}
+    button{border:0;border-radius:10px;padding:11px 14px;background:var(--accent);color:#151515;font-weight:800;cursor:pointer}button.secondary{background:#343a45;color:var(--text)}button.danger{background:var(--danger);color:white}
+    button:disabled{opacity:.45;cursor:not-allowed}.row{display:flex;gap:8px;align-items:center}.row>*{flex:1}.small{font-size:13px;color:var(--muted)}
+    .players{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.pill{display:flex;gap:7px;align-items:center;background:var(--panel2);border:1px solid var(--line);padding:7px 10px;border-radius:999px}.pill.busted{opacity:.55;text-decoration:line-through}.pill button{padding:0;background:none;color:var(--danger)}
+    .victims{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.victim{display:flex;gap:8px;align-items:center;padding:9px;background:var(--panel2);border-radius:9px}.victim input{width:auto}
+    .type-buttons{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.type-buttons label{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px;text-align:center;cursor:pointer}.type-buttons input{display:none}.type-buttons label:has(input:checked){border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+    .summary{margin-top:10px;padding:11px;border-radius:10px;background:#242018;color:#f5d98d}.error{color:#ff8e8e;margin-top:8px}
+    .table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:650px}th,td{text-align:left;padding:10px;border-bottom:1px solid var(--line)}th{color:var(--muted);font-size:13px}td.num,th.num{text-align:right}.rank{font-weight:900;color:var(--accent)}
+    .history-item{display:grid;grid-template-columns:1fr auto;gap:10px;padding:11px 0;border-bottom:1px solid var(--line)}.history-item:last-child{border:0}.history-item button{padding:7px 9px}
+    .rules{display:flex;gap:14px;flex-wrap:wrap}.rule{background:var(--panel2);padding:8px 11px;border-radius:9px}.footer-actions{display:flex;gap:8px;justify-content:flex-end}
+    @media(max-width:760px){.grid{grid-template-columns:1fr}.victims{grid-template-columns:1fr}.type-buttons{grid-template-columns:1fr}.row.mobile-stack{flex-direction:column;align-items:stretch}}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <h1>🔥 The Hunger Games</h1>
+    <p>NL Hold'em · Bounty Hunter League Tracker</p>
+  </header>
+
+  <section class="card">
+    <div class="row mobile-stack">
+      <div><label class="small">Toernooinaam</label><input id="tournamentName" placeholder="The Hunger Games"></div>
+      <div><label class="small">Datum</label><input id="tournamentDate" type="date"></div>
+    </div>
+    <div class="rules" style="margin-top:12px">
+      <div class="rule">KO-punten: <b>1, 2, 3, 4…</b></div>
+      <div class="rule">💀💀 Double Kill: <b>+2 LP</b></div>
+      <div class="rule">💀💀💀 Triple Kill: <b>+4 LP</b></div>
+    </div>
+  </section>
+
+  <div class="grid">
+    <div>
+      <section class="card">
+        <h2>Spelers</h2>
+        <div class="row"><input id="playerName" placeholder="Naam speler"><button id="addPlayer">Toevoegen</button></div>
+        <div id="players" class="players"></div>
+      </section>
+
+      <section class="card">
+        <h2>Eliminatie registreren</h2>
+        <label class="small">Killer</label>
+        <select id="killer"></select>
+
+        <h3>Type</h3>
+        <div class="type-buttons">
+          <label><input type="radio" name="killType" value="normal" checked>Normale KO</label>
+          <label><input type="radio" name="killType" value="double">💀💀 Double Kill</label>
+          <label><input type="radio" name="killType" value="triple">💀💀💀 Triple Kill</label>
+        </div>
+
+        <h3>Uitgeschakelde speler(s)</h3>
+        <div id="victims" class="victims"></div>
+        <div id="preview" class="summary"></div>
+        <div id="error" class="error"></div>
+        <button id="registerKill" style="width:100%;margin-top:12px">Registreren</button>
+      </section>
+    </div>
+
+    <div>
+      <section class="card">
+        <h2>Live klassement</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>#</th><th>Speler</th><th class="num">KO</th><th class="num">DK</th><th class="num">TK</th><th class="num">KO LP</th><th class="num">Bonus</th><th class="num">Totaal</th></tr></thead>
+            <tbody id="standings"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Laatste lobbybericht</h2>
+        <div id="latestLobby" class="summary">Nog geen eliminatie geregistreerd.</div>
+        <button id="copyLatest" class="secondary" style="width:100%;margin-top:10px" disabled>📋 Kopieer lobbytekst</button>
+      </section>
+
+      <section class="card">
+        <h2>Historie</h2>
+        <div id="history"></div>
+      </section>
+    </div>
+  </div>
+
+  <section class="card">
+    <div class="footer-actions">
+      <button class="secondary" id="exportBtn">Backup exporteren</button>
+      <button class="secondary" id="importBtn">Backup importeren</button>
+      <input id="importFile" type="file" accept=".json,application/json" hidden>
+      <button class="danger" id="resetBtn">Nieuw toernooi / reset</button>
+    </div>
+  </section>
+</div>
+
+<script>
+const STORAGE_KEY = 'theHungerGamesTracker_v1';
+const emptyState = () => ({
+  tournamentName: 'The Hunger Games',
+  tournamentDate: new Date().toISOString().slice(0,10),
+  players: [],
+  events: []
+});
+let state = load();
+
+const $ = id => document.getElementById(id);
+function uid(){ return crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36)+Math.random().toString(36).slice(2); }
+function load(){
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || emptyState(); }
+  catch { return emptyState(); }
+}
+function save(){
+  state.tournamentName = $('tournamentName').value.trim() || 'The Hunger Games';
+  state.tournamentDate = $('tournamentDate').value;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+function esc(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function playerById(id){ return state.players.find(p=>p.id===id); }
+
+function calculate(){
+  const stats = {};
+  state.players.forEach(p => stats[p.id] = {id:p.id,name:p.name,kos:0,double:0,triple:0,koLP:0,bonus:0,total:0,busted:false});
+  for(const e of state.events){
+    const s = stats[e.killerId];
+    if(!s) continue;
+    const count = e.victimIds.length;
+    for(let i=0;i<count;i++){
+      s.kos++;
+      s.koLP += s.kos;
+      if(stats[e.victimIds[i]]) stats[e.victimIds[i]].busted = true;
+    }
+    if(e.type==='double'){ s.double++; s.bonus += 2; }
+    if(e.type==='triple'){ s.triple++; s.bonus += 4; }
+    s.total = s.koLP + s.bonus;
+  }
+  Object.values(stats).forEach(s=>s.total=s.koLP+s.bonus);
+  return stats;
+}
+
+function render(){
+  $('tournamentName').value = state.tournamentName;
+  $('tournamentDate').value = state.tournamentDate;
+  const stats = calculate();
+
+  $('players').innerHTML = state.players.length ? state.players.map(p =>
+    `<span class="pill ${stats[p.id].busted?'busted':''}">${esc(p.name)}${stats[p.id].busted?' · OUT':''}<button title="Verwijder speler" onclick="removePlayer('${p.id}')">×</button></span>`
+  ).join('') : '<span class="small">Nog geen spelers toegevoegd.</span>';
+
+  const active = state.players.filter(p=>!stats[p.id].busted);
+  const previousKiller = $('killer').value;
+  $('killer').innerHTML = '<option value="">Selecteer killer…</option>' + active.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('');
+  if(active.some(p=>p.id===previousKiller)) $('killer').value=previousKiller;
+
+  renderVictims();
+  renderStandings(stats);
+  ensureStories();
+  renderLatestLobby();
+  renderHistory();
+  updatePreview();
+}
+
+function renderVictims(){
+  const stats = calculate(), killerId=$('killer').value;
+  const checked = [...document.querySelectorAll('#victims input:checked')].map(x=>x.value);
+  const candidates = state.players.filter(p=>!stats[p.id].busted && p.id!==killerId);
+  $('victims').innerHTML = candidates.length ? candidates.map(p =>
+    `<label class="victim"><input type="checkbox" value="${p.id}" ${checked.includes(p.id)?'checked':''}> ${esc(p.name)}</label>`
+  ).join('') : '<span class="small">Geen beschikbare slachtoffers.</span>';
+  document.querySelectorAll('#victims input').forEach(x=>x.addEventListener('change',updatePreview));
+}
+
+function selectedType(){ return document.querySelector('input[name="killType"]:checked').value; }
+function selectedVictims(){ return [...document.querySelectorAll('#victims input:checked')].map(x=>x.value); }
+
+function validate(type,victims){
+  if(!$('killer').value) return 'Selecteer eerst de killer.';
+  if(type==='normal' && victims.length!==1) return 'Een normale KO vereist exact 1 uitgeschakelde speler.';
+  if(type==='double' && victims.length!==2) return 'Een Double Kill vereist exact 2 uitgeschakelde spelers.';
+  if(type==='triple' && victims.length<3) return 'Een Triple Kill vereist minimaal 3 uitgeschakelde spelers.';
+  return '';
+}
+
+function updatePreview(){
+  const killerId=$('killer').value, type=selectedType(), victims=selectedVictims(), stats=calculate();
+  if(!killerId){ $('preview').textContent='Selecteer een killer en slachtoffer(s).'; return; }
+  const current=stats[killerId]?.kos||0;
+  let koPoints=0;
+  for(let i=1;i<=victims.length;i++) koPoints += current+i;
+  const bonus=type==='double'?2:type==='triple'?4:0;
+  $('preview').innerHTML = victims.length
+    ? `KO-punten: <b>${koPoints}</b> + bonus: <b>${bonus}</b> = <b>${koPoints+bonus} LP</b>`
+    : `Huidige KO's: <b>${current}</b>. Selecteer slachtoffer(s).`;
+}
+
+function renderStandings(stats){
+  const rows=Object.values(stats).sort((a,b)=>b.total-a.total || b.kos-a.kos || b.double-a.double || b.triple-a.triple || a.name.localeCompare(b.name,'nl'));
+  $('standings').innerHTML = rows.length ? rows.map((s,i)=>`<tr>
+    <td class="rank">${i+1}</td><td>${esc(s.name)} ${s.busted?'<span class="small">(OUT)</span>':''}</td>
+    <td class="num">${s.kos}</td><td class="num">${s.double}</td><td class="num">${s.triple}</td>
+    <td class="num">${s.koLP}</td><td class="num">${s.bonus}</td><td class="num"><b>${s.total}</b></td>
+  </tr>`).join('') : '<tr><td colspan="8" class="small">Nog geen spelers.</td></tr>';
+}
+
+function eventBreakdownAt(index){
+  let kos=0, lpBefore=0;
+  const e=state.events[index];
+  for(let i=0;i<index;i++){
+    const prev=state.events[i];
+    if(prev.killerId===e.killerId){
+      let beforeKos=kos;
+      for(let j=1;j<=prev.victimIds.length;j++){ lpBefore += beforeKos+j; }
+      lpBefore += prev.type==='double'?2:prev.type==='triple'?4:0;
+      kos += prev.victimIds.length;
+    }
+  }
+  let koLP=0;
+  for(let j=1;j<=e.victimIds.length;j++) koLP += kos+j;
+  const bonus=e.type==='double'?2:e.type==='triple'?4:0;
+  return {kosBefore:kos,kosAfter:kos+e.victimIds.length,koLP,bonus,earned:koLP+bonus,totalAfter:lpBefore+koLP+bonus};
+}
+function eventPointsAt(index){ return eventBreakdownAt(index).earned; }
+
+const normalStories=[
+  (k,v)=>`${k} heeft bloed geroken en stuurt ${v} de arena uit.`,
+  (k,v)=>`${k} slaat opnieuw toe! Voor ${v} eindigen The Hunger Games hier.`,
+  (k,v)=>`${v} probeert te overleven, maar ${k} maakt een einde aan die droom.`,
+  (k,v)=>`Een nieuw slachtoffer valt in de arena: ${k} schakelt ${v} uit.`,
+  (k,v)=>`${k} kent geen genade. ${v} moet de arena verlaten.`,
+  (k,v)=>`De jacht gaat verder: ${k} rekent af met ${v}.`,
+  (k,v)=>`${v} redt het niet tegen ${k}. Weer een tribuut minder in de arena.`,
+  (k,v)=>`${k} voegt ${v} toe aan de lijst met slachtoffers.`
+];
+const doubleStories=[
+  (k,vs)=>`Chaos in de arena! ${k} schakelt ${vs} in één klap uit. Twee tributen vallen tegelijk.`,
+  (k,vs)=>`${k} heeft bloed geroken: ${vs} verdwijnen allebei in dezelfde hand uit de arena.`,
+  (k,vs)=>`Twee slachtoffers, één hand. ${k} maakt korte metten met ${vs}.`,
+  (k,vs)=>`De kanonnen klinken twee keer! ${k} stuurt ${vs} samen naar de uitgang.`
+];
+const tripleStories=[
+  (k,vs)=>`Complete chaos in de arena! ${k} schakelt ${vs} allemaal in één hand uit.`,
+  (k,vs)=>`Een slachting in The Hunger Games: ${k} stuurt ${vs} in één hand naar huis.`,
+  (k,vs)=>`Drie kanonnen klinken vrijwel tegelijk. ${k} rekent in één hand af met ${vs}.`,
+  (k,vs)=>`${k} laat weinig heel van de concurrentie: ${vs} vallen allemaal in dezelfde hand.`
+];
+function joinNames(names){
+  if(names.length<=1)return names[0]||'';
+  if(names.length===2)return `${names[0]} én ${names[1]}`;
+  return `${names.slice(0,-1).join(', ')} én ${names[names.length-1]}`;
+}
+function generateLobbyStory(e,index){
+  const killer=playerById(e.killerId)?.name||'Onbekend';
+  const names=e.victimIds.map(id=>playerById(id)?.name||'Onbekend');
+  const b=eventBreakdownAt(index);
+  const seed=(e.id||'').split('').reduce((a,c)=>a+c.charCodeAt(0),0);
+  let title,story,bonusLine='';
+  if(e.type==='double'){
+    title='💀💀 DOUBLE KILL!';
+    story=doubleStories[seed%doubleStories.length](killer,joinNames(names));
+    bonusLine='\n🔥 Double Kill bonus: +2 LP';
+  }else if(e.type==='triple'){
+    title='💀💀💀 TRIPLE KILL!';
+    story=tripleStories[seed%tripleStories.length](killer,joinNames(names));
+    bonusLine='\n🔥 Triple Kill bonus: +4 LP';
+  }else{
+    title='🔥 THE HUNGER GAMES';
+    story=normalStories[seed%normalStories.length](killer,names[0]);
+  }
+  return `${title}\n${story}\n\n💀 ${b.kosAfter} KO${b.kosAfter===1?'':'\'s'} | 🎯 +${b.earned} LP deze hand | 🏆 ${b.totalAfter} LP totaal${bonusLine}`;
+}
+function ensureStories(){
+  state.events.forEach((e,i)=>{ if(!e.story) e.story=generateLobbyStory(e,i); });
+  save();
+}
+async function copyText(text,button){
+  try{
+    await navigator.clipboard.writeText(text);
+  }catch{
+    const ta=document.createElement('textarea'); ta.value=text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove();
+  }
+  if(button){const old=button.textContent;button.textContent='✓ Gekopieerd';setTimeout(()=>button.textContent=old,1400);}
+}
+function renderLatestLobby(){
+  const e=state.events[state.events.length-1];
+  if(!e){
+    $('latestLobby').textContent='Nog geen eliminatie geregistreerd.';
+    $('copyLatest').disabled=true; return;
+  }
+  $('latestLobby').style.whiteSpace='pre-wrap';
+  $('latestLobby').textContent=e.story;
+  $('copyLatest').disabled=false;
+}
+
+function renderHistory(){
+  if(!state.events.length){ $('history').innerHTML='<div class="small">Nog geen eliminaties geregistreerd.</div>'; return; }
+  $('history').innerHTML = state.events.map((e,i)=>{
+    const killer=playerById(e.killerId)?.name||'Onbekend';
+    const victims=e.victimIds.map(id=>playerById(id)?.name||'Onbekend').join(', ');
+    const label=e.type==='double'?'💀💀 Double Kill':e.type==='triple'?'💀💀💀 Triple Kill':'KO';
+    return `<div class="history-item"><div><b>${esc(killer)}</b> → ${esc(victims)}<br><span class="small">${label} · +${eventPointsAt(i)} LP</span><br><button class="secondary" style="margin-top:7px;padding:7px 9px" onclick="copyStory('${e.id}',this)">📋 Kopieer lobbytekst</button></div><button class="danger" onclick="undoEvent('${e.id}')">Ongedaan</button></div>`;
+  }).reverse().join('');
+}
+
+$('addPlayer').onclick=()=>{
+  const name=$('playerName').value.trim();
+  if(!name) return;
+  if(state.players.some(p=>p.name.toLowerCase()===name.toLowerCase())) return alert('Deze speler bestaat al.');
+  state.players.push({id:uid(),name}); $('playerName').value=''; save(); render();
+};
+$('playerName').addEventListener('keydown',e=>{if(e.key==='Enter')$('addPlayer').click();});
+$('killer').addEventListener('change',()=>{renderVictims();updatePreview();});
+document.querySelectorAll('input[name="killType"]').forEach(x=>x.addEventListener('change',updatePreview));
+$('tournamentName').addEventListener('change',save); $('tournamentDate').addEventListener('change',save);
+
+$('registerKill').onclick=()=>{
+  const type=selectedType(), victimIds=selectedVictims(), killerId=$('killer').value;
+  const error=validate(type,victimIds); $('error').textContent=error; if(error)return;
+  const event={id:uid(),killerId,victimIds,type,createdAt:new Date().toISOString()};
+  state.events.push(event);
+  event.story=generateLobbyStory(event,state.events.length-1);
+  save(); render();
+};
+
+window.copyStory=(id,button)=>{
+  const e=state.events.find(x=>x.id===id); if(e) copyText(e.story,button);
+};
+$('copyLatest').onclick=function(){
+  const e=state.events[state.events.length-1]; if(e) copyText(e.story,this);
+};
+
+window.undoEvent=id=>{
+  const e=state.events.find(x=>x.id===id); if(!e)return;
+  if(confirm('Deze registratie ongedaan maken?')){state.events=state.events.filter(x=>x.id!==id);save();render();}
+};
+window.removePlayer=id=>{
+  if(state.events.some(e=>e.killerId===id||e.victimIds.includes(id))) return alert('Deze speler komt al voor in de historie. Maak die registraties eerst ongedaan.');
+  if(confirm('Speler verwijderen?')){state.players=state.players.filter(p=>p.id!==id);save();render();}
+};
+
+$('resetBtn').onclick=()=>{
+  if(confirm('Weet je zeker dat je het volledige toernooi wilt wissen?')){
+    state=emptyState(); localStorage.removeItem(STORAGE_KEY); save(); render();
+  }
+};
+
+$('exportBtn').onclick=()=>{
+  save();
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='the-hunger-games-backup.json';a.click();URL.revokeObjectURL(a.href);
+};
+$('importBtn').onclick=()=>$('importFile').click();
+$('importFile').onchange=async e=>{
+  const file=e.target.files[0]; if(!file)return;
+  try{
+    const data=JSON.parse(await file.text());
+    if(!Array.isArray(data.players)||!Array.isArray(data.events)) throw new Error();
+    if(confirm('Huidige gegevens vervangen door deze backup?')){state=data;save();render();}
+  }catch{alert('Ongeldig backupbestand.');}
+  e.target.value='';
+};
+
+render();
+</script>
+</body>
+</html>
